@@ -16,11 +16,12 @@ import {
 import api from '../services/api';
 
 export default class LoginScreen extends Component{
+  
   static navigationOptions = {
     header: null,
   };
   
-  state = {
+    state = {
     loggedInUser: null,
     errorMessage: null,
     email: '',
@@ -28,20 +29,23 @@ export default class LoginScreen extends Component{
   };
   
   onChangeTextEmail = (event) => {
+    event.persist();
     this.setState({ email:event.nativeEvent.text });
   };
 
   onChangeTextPassword = (event) => {
+    event.persist();
     this.setState({ password:event.nativeEvent.text });
   };
 
   signIn = async (email, password) => {
     try {
       const response = await api.post('/auth/authenticate', {
-        email: 'josegorgonho@eng.ci.ufpb.br',
-        password: '123456789',
+        email,
+        password,
       });
 
+      console.log(response);
       const { user, token } = response.data;
     
       await AsyncStorage.multiSet([
@@ -50,10 +54,10 @@ export default class LoginScreen extends Component{
       ]);
 
       this.setState({ loggedInUser: user });
-
       Alert.alert('Login com sucesso!');
 
     } catch (response) {
+      console.log(response);
       this.setState({ errorMessage: response.data.error });
     }
   };
@@ -61,25 +65,33 @@ export default class LoginScreen extends Component{
   render() {
     return (
     <View style={styles.container}>
-      {!!this.state.errorMessage && <Text>{ this.state.errorMessage }</Text>}
+      
+      <Image
+        style = {styles.logo}
+        source = {require('../icons/logo3.png')}
+      />
+      
+      {!!this.state.errorMessage && <Text style = {styles.textError}>{ this.state.errorMessage }</Text>}
       <View style={styles.containerTextInput}>
         <TextInput
           style = {styles.input}
           placeholder = "Login"
+          placeholderTextColor = "#4B0082"
           onChange = {this.onChangeTextEmail}
         />
         
         <TextInput
           style = {styles.input}
           placeholder = "Senha"
+          placeholderTextColor = "#4B0082"
           secureTextEntry = {true}
           onChange = {this.onChangeTextPassword}
         />
-        
+
       </View>
 
       <TouchableOpacity 
-        onPress = { this.signIn }
+        onPress = { () => this.signIn(this.state.email.trim().toLowerCase(), this.state.password) }
         style = { styles.loginButton}
       >
         
@@ -87,6 +99,21 @@ export default class LoginScreen extends Component{
           ENTRAR
         </Text>
       
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.forgotPasswordButton}>
+        <Text style={styles.textForgotPassword}>
+          ESQUECI MINHA SENHA
+        </Text>
+      </TouchableOpacity>
+    
+      <Text style={styles.textNewUser}>
+        NÃO POSSUI CONTA?
+      </Text> 
+      <TouchableOpacity style={styles.newUserButton}>
+        <Text style={styles.textNewUser}>
+          CRIAR NOVA CONTA
+        </Text>
       </TouchableOpacity>
     </View>
     );
@@ -98,14 +125,71 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
+    justifyContent: 'flex-start',
+    paddingTop: 110,
+  },
+  logo: {
+    width: 500,
+    height: 160,
+  },
+  textError: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#CC0000',
+  }, 
+  input: {
+    borderColor: '#E8E8E8',
+    borderBottomWidth: 1.5,
+    width: 340,
+    marginTop: 25,
+    padding: 10,
+    fontSize: 14,
+  },
+  loginButton: {
+    width: 340,
+    height: 42,
+    backgroundColor: '#4B0082',
+    marginTop: 20,
+    marginBottom: 20,
+    borderRadius: 9,
+    alignItems: 'center',
     justifyContent: 'center',
   },
-  containerTextInput: {
-
+  textLoginButton: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#FFF',
   },
-  input: {
-
+  textForgotPassword: {
+    marginTop: 55,
+    marginBottom: 55,
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#979696',
   },
-  
-
+  textNewUser: {
+    paddingLeft: 50,
+    fontSize: 14,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    color: '#8A2BE2',
+  },
+  newUserButton: {
+    width: 350,
+    height: 42,
+    borderWidth: 2,
+    borderColor: '#4B0082',
+    backgroundColor: '#FFF',
+    marginTop: 15,
+    marginBottom: 20,
+    borderRadius: 9,
+    alignItems: 'center',
+    justifyContent: 'center',
+    
+  },
+  textNewUser: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#4B0082',
+  },
 });
