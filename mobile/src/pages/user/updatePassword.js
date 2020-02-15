@@ -6,23 +6,21 @@ import {
   Image,
   TextInput,
   TouchableOpacity,
-  AsyncStorage,
   Alert,
 } from 'react-native';
 
-import api from '../services/api';
+import api from '../../services/api';
 
-export default class LoginScreen extends Component{
+export default class UpdatePassword extends Component{
   
   static navigationOptions = {
     header: null,
   };
   
-    state = {
+  state = {
     loggedInUser: null,
     errorMessage: null,
     email: '',
-    password: '',
   };
   
   onChangeTextEmail = (event) => {
@@ -30,28 +28,19 @@ export default class LoginScreen extends Component{
     this.setState({ email:event.nativeEvent.text });
   };
 
-  onChangeTextPassword = (event) => {
-    event.persist();
-    this.setState({ password:event.nativeEvent.text });
-  };
-
-  signIn = async (email, password) => {
+  forgotPassword = async (email) => {
     try {
-      const response = await api.post('/auth/authenticate', {
+      const response = await api.post('/auth/forgot_password', {
         email,
-        password,
       });
-
-      const { user, token } = response.data;
     
-      await AsyncStorage.multiSet([
-        ['@CodeApi:token', token],
-        ['@CodeApi:user', JSON.stringify(user)],
-      ]);
-
-      this.setState({ loggedInUser: user });
-      Alert.alert('','Login com sucesso!');
-
+      Alert.alert('','Token enviado para e-mail', [{
+        text: 'OK',
+        onPress: () => this.props.navigation.navigate('ConfirmToken', { 
+            email: email, 
+        }),
+      }]);
+      
     } catch (response) {
       this.setState({ errorMessage: response.data.error });
     }
@@ -63,58 +52,46 @@ export default class LoginScreen extends Component{
       
       <Image
         style = {styles.logo}
-        source = {require('../icons/logo3.png')}
+        source = {require('../../icons/logo3.png')}
       />
       
       {!!this.state.errorMessage && <Text style = {styles.textError}>{ this.state.errorMessage }</Text>}
+      <Text style={styles.textHeader}>
+          Digite aqui o e-mail da conta que deseja recuperar a senha.
+      </Text>
+      
       <View style={styles.containerTextInput}>
-        <TextInput
-          style = {styles.input}
-          placeholder = "Login"
-          placeholderTextColor = "#4B0082"
-          onChange = {this.onChangeTextEmail}
-        />
         
         <TextInput
           style = {styles.input}
-          placeholder = "Senha"
+          placeholder = "E-mail"
           placeholderTextColor = "#4B0082"
-          secureTextEntry = {true}
-          onChange = {this.onChangeTextPassword}
+          onChange = {this.onChangeTextEmail}
         />
 
       </View>
 
       <TouchableOpacity 
-        onPress = { () => this.signIn(this.state.email.trim().toLowerCase(), this.state.password) }
-        style = { styles.loginButton}
+        onPress = { () => this.forgotPassword(this.state.email.trim().toLowerCase())}
+        style = { styles.forgotPasswordButton}
       >
         
-        <Text style = {styles.textLoginButton}>
-          ENTRAR
+        <Text style = {styles.textForgotPassword}>
+          ENVIAR
         </Text>
       
       </TouchableOpacity>
-
-      <TouchableOpacity 
-        style={styles.forgotPasswordButton}
-        onPress={() => this.props.navigation.navigate('UpdatePassword')}  
-      >
-        <Text style={styles.textForgotPassword}>
-          ESQUECI MINHA SENHA
-        </Text>
-      </TouchableOpacity>
     
-      <Text style={styles.textNewUser}>
-        NÃO POSSUI CONTA?
+      <Text style={styles.textInfo}>
+        JÁ POSSUI CONTA?
       </Text> 
 
       <TouchableOpacity 
-        style={styles.newUserButton}
-        onPress={() => this.props.navigation.navigate('CreateUser')}
+        style={styles.existingUserButton}
+        onPress={() => this.props.navigation.navigate('LoginScreen')}
       >
-        <Text style={styles.textNewUser}>
-          CRIAR NOVA CONTA
+        <Text style={styles.textExistingUser}>
+          FAZER LOGIN
         </Text>
       </TouchableOpacity>
     </View>
@@ -134,6 +111,13 @@ const styles = StyleSheet.create({
     width: 500,
     height: 160,
   },
+  textHeader: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#4B0082',
+    marginLeft: 40,
+    marginTop: 60,
+  },
   textError: {
     fontSize: 14,
     fontWeight: 'bold',
@@ -142,12 +126,17 @@ const styles = StyleSheet.create({
   input: {
     borderColor: '#E8E8E8',
     borderBottomWidth: 1.5,
-    width: 340,
+    width: 350,
     marginTop: 25,
     padding: 10,
     fontSize: 14,
   },
-  loginButton: {
+  textForgotPassword: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#FFF',
+  },
+  forgotPasswordButton: {
     width: 350,
     height: 42,
     backgroundColor: '#4B0082',
@@ -157,19 +146,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  textLoginButton: {
+  textExistingUser: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#FFF',
+    color: '#4B0082',
   },
-  textForgotPassword: {
-    marginTop: 55,
-    marginBottom: 55,
+  textInfo: {
+    paddingTop: 110,
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#979696',
+    textAlign: 'center',
+    color: '#4B0082',
   },
-  newUserButton: {
+  existingUserButton: {
     width: 350,
     height: 42,
     borderWidth: 2,
@@ -180,11 +169,5 @@ const styles = StyleSheet.create({
     borderRadius: 9,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  textNewUser: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    color: '#4B0082',
-  },
+  }, 
 });

@@ -10,21 +10,27 @@ import {
   Alert,
 } from 'react-native';
 
-import api from '../services/api';
+import api from '../../services/api';
 
-export default class LoginScreen extends Component{
+export default class CreateUser extends Component{
   
   static navigationOptions = {
     header: null,
   };
   
-    state = {
+  state = {
     loggedInUser: null,
     errorMessage: null,
+    name: '',
     email: '',
     password: '',
   };
   
+  onChangeTextName = (event) => {
+    event.persist();
+    this.setState({ name:event.nativeEvent.text });
+  };
+
   onChangeTextEmail = (event) => {
     event.persist();
     this.setState({ email:event.nativeEvent.text });
@@ -35,9 +41,10 @@ export default class LoginScreen extends Component{
     this.setState({ password:event.nativeEvent.text });
   };
 
-  signIn = async (email, password) => {
+  register = async (name, email, password) => {
     try {
-      const response = await api.post('/auth/authenticate', {
+      const response = await api.post('/auth/register', {
+        name,
         email,
         password,
       });
@@ -49,8 +56,8 @@ export default class LoginScreen extends Component{
         ['@CodeApi:user', JSON.stringify(user)],
       ]);
 
-      this.setState({ loggedInUser: user });
-      Alert.alert('','Login com sucesso!');
+      Alert.alert('','Usuário criado com sucesso!');
+      this.props.navigation.navigate('LoginScreen');
 
     } catch (response) {
       this.setState({ errorMessage: response.data.error });
@@ -63,14 +70,21 @@ export default class LoginScreen extends Component{
       
       <Image
         style = {styles.logo}
-        source = {require('../icons/logo3.png')}
+        source = {require('../../icons/logo3.png')}
       />
       
       {!!this.state.errorMessage && <Text style = {styles.textError}>{ this.state.errorMessage }</Text>}
       <View style={styles.containerTextInput}>
         <TextInput
           style = {styles.input}
-          placeholder = "Login"
+          placeholder = "Nome"
+          placeholderTextColor = "#4B0082"
+          onChange = {this.onChangeTextName}
+        />
+        
+        <TextInput
+          style = {styles.input}
+          placeholder = "E-mail"
           placeholderTextColor = "#4B0082"
           onChange = {this.onChangeTextEmail}
         />
@@ -86,35 +100,26 @@ export default class LoginScreen extends Component{
       </View>
 
       <TouchableOpacity 
-        onPress = { () => this.signIn(this.state.email.trim().toLowerCase(), this.state.password) }
-        style = { styles.loginButton}
+        onPress = { () => this.register(this.state.name.trim(),this.state.email.trim().toLowerCase(), this.state.password)}
+        style = { styles.newUserButton}
       >
         
-        <Text style = {styles.textLoginButton}>
-          ENTRAR
+        <Text style = {styles.textNewUser}>
+          FINALIZAR REGISTRO
         </Text>
       
       </TouchableOpacity>
-
-      <TouchableOpacity 
-        style={styles.forgotPasswordButton}
-        onPress={() => this.props.navigation.navigate('UpdatePassword')}  
-      >
-        <Text style={styles.textForgotPassword}>
-          ESQUECI MINHA SENHA
-        </Text>
-      </TouchableOpacity>
     
-      <Text style={styles.textNewUser}>
-        NÃO POSSUI CONTA?
+      <Text style={styles.textInfo}>
+        JÁ POSSUI CONTA?
       </Text> 
 
       <TouchableOpacity 
-        style={styles.newUserButton}
-        onPress={() => this.props.navigation.navigate('CreateUser')}
+        style={styles.existingUserButton}
+        onPress={() => this.props.navigation.navigate('LoginScreen')}
       >
-        <Text style={styles.textNewUser}>
-          CRIAR NOVA CONTA
+        <Text style={styles.textExistingUser}>
+          FAZER LOGIN
         </Text>
       </TouchableOpacity>
     </View>
@@ -147,7 +152,18 @@ const styles = StyleSheet.create({
     padding: 10,
     fontSize: 14,
   },
-  loginButton: {
+  textInfo: {
+    paddingTop: 50,
+    fontSize: 14,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  textNewUser: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#FFF',
+  },
+  newUserButton: {
     width: 350,
     height: 42,
     backgroundColor: '#4B0082',
@@ -157,19 +173,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  textLoginButton: {
+  textExistingUser: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#FFF',
+    color: '#4B0082',
   },
-  textForgotPassword: {
-    marginTop: 55,
-    marginBottom: 55,
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#979696',
-  },
-  newUserButton: {
+  existingUserButton: {
     width: 350,
     height: 42,
     borderWidth: 2,
@@ -181,10 +190,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  textNewUser: {
+  textInfo: {
+    paddingTop: 50,
     fontSize: 14,
     fontWeight: 'bold',
-    textAlign: 'center',
     color: '#4B0082',
-  },
+  },    
 });
