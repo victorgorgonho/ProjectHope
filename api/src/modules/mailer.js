@@ -4,6 +4,7 @@ const hbs = require('nodemailer-express-handlebars');
 
 const{ host, port, user, pass } = require ('../config/mail.json');
 
+//Connect to mailtrap via smtp, and send token to mail
 const transport = nodemailer.createTransport({
     host,
     port,

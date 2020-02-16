@@ -50,10 +50,21 @@ export default class LoginScreen extends Component{
       ]);
 
       this.setState({ loggedInUser: user });
-      Alert.alert('','Login com sucesso!');
 
+      Alert.alert('','Login com sucesso!');
+      this.props.navigation.navigate('HomeScreen');
     } catch (response) {
       this.setState({ errorMessage: response.data.error });
+    }
+  };
+  
+
+  async componentDidMount() {
+    const token = await AsyncStorage.getItem('@CodeApi:token');
+    const user = JSON.parse(await AsyncStorage.getItem('@CodeApi:users'));
+
+    if(token && user) {
+        this.setState({ loggedInUser: user });
     }
   };
 
@@ -70,7 +81,7 @@ export default class LoginScreen extends Component{
       <View style={styles.containerTextInput}>
         <TextInput
           style = {styles.input}
-          placeholder = "Login"
+          placeholder = "E-mail"
           placeholderTextColor = "#4B0082"
           onChange = {this.onChangeTextEmail}
         />

@@ -4,6 +4,7 @@ import CreateUser from './pages/user/createUser';
 import UpdatePassword from './pages/user/updatePassword';
 import ConfirmToken from './pages/user/confirmToken';
 import LoginScreen from './pages/loginScreen';
+import HomeScreen from './pages/homeScreen';
 
 export default createStackNavigator({
     LoginScreen: {
@@ -17,7 +18,10 @@ export default createStackNavigator({
     },
     ConfirmToken: {
         screen: ConfirmToken
-    }
+    },
+    HomeScreen: {
+        screen: HomeScreen
+    },
 }, {
     navigationOptions: {
         headerStyle: {

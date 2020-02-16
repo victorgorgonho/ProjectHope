@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const authConfig = require ('../../config/auth.json');
 
+//This file works in a way that before every request, token will be checked to see if is an authorizated request
 module.exports = (req, res, next) => {
     const authHeader = req.headers.authorization;
 
@@ -10,7 +11,7 @@ module.exports = (req, res, next) => {
     const parts = authHeader.split(' ');
 
     if(!parts.split === 2)
-        return res.status(401).send({ error: 'Token error '});
+        return res.status(401).send({ error: 'Token malformatted'});
 
     const [scheme, token] = parts;
 

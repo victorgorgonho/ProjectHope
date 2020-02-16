@@ -14,6 +14,7 @@ function generateToken(params = {}){
     });
 }
 
+//Create new user
 router.post('/register', async(req, res)=>{
     const {email} = req.body;
     
@@ -31,10 +32,11 @@ router.post('/register', async(req, res)=>{
         });
         
     } catch(err) {
-        return res.status(400).send({error : 'Registration failed'});
+        return res.status(400).send({error : 'Failed on register'});
     }
 });
 
+//Search for a user in MongoDB to login
 router.post('/authenticate', async(req, res) =>{
     const {email, password } = req.body;
 
@@ -55,6 +57,7 @@ router.post('/authenticate', async(req, res) =>{
 
 });
 
+//Send token to e-mail to reset password
 router.post('/forgot_password', async (req, res) => {
     const {email} = req.body;
 
@@ -84,18 +87,20 @@ router.post('/forgot_password', async (req, res) => {
         }, (err) => {
             if(err){
                 console.log(err);
-                return res.status(400).send({error: 'Error, try again'});
+                return res.status(400).send({error: 'Could not send mail, try again in a few seconds'});
             }
             return res.send();
         })
 
     } catch (err) {
         console.log(err);
-        res.status(400).send({error: 'Try again'});
+        res.status(400).send({error: 'Error, try again in a few seconds'});
 
     }
 });
 
+
+//Reset password based on the token sent to mail
 router.post('/reset_password', async (req,res) => {
     const{email ,token, password} = req.body ;
 
@@ -112,7 +117,7 @@ router.post('/reset_password', async (req,res) => {
         const now = new Date();
 
         if( now> user.passwordResetExpires)
-        return res.status(400).send({error: 'Token expired'});
+        return res.status(400).send({error: 'Token is not valid anymore, try again'});
 
         user.password = password;
 
@@ -121,7 +126,7 @@ router.post('/reset_password', async (req,res) => {
         res.send();
 
     } catch (err) {
-        return res.status(400).send({error: 'Could not reset password, try again'})
+        return res.status(400).send({error: 'Failed reseting password, try again'});
     }
 
 });

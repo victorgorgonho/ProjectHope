@@ -100,7 +100,7 @@ export default class CreateUser extends Component{
       </View>
 
       <TouchableOpacity 
-        onPress = { () => this.register(this.state.name.trim(),this.state.email.trim().toLowerCase(), this.state.password)}
+        onPress = { () => this.register(this.state.name.trim(),this.state.email.trim(), this.state.password)}
         style = { styles.newUserButton}
       >
         
