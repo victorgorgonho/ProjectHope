@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   AsyncStorage,
   Alert,
+  Keyboard,
 } from 'react-native';
 
 import api from '../services/api';
@@ -46,25 +47,17 @@ export default class LoginScreen extends Component{
     
       await AsyncStorage.multiSet([
         ['@CodeApi:token', token],
-        ['@CodeApi:user', JSON.stringify(user)],
+        ['@CodeApi:users', JSON.stringify(user)],
       ]);
 
       this.setState({ loggedInUser: user });
-
+      Keyboard.dismiss();
+      
       Alert.alert('','Login com sucesso!');
       this.props.navigation.navigate('HomeScreen');
+      
     } catch (response) {
       this.setState({ errorMessage: response.data.error });
-    }
-  };
-  
-
-  async componentDidMount() {
-    const token = await AsyncStorage.getItem('@CodeApi:token');
-    const user = JSON.parse(await AsyncStorage.getItem('@CodeApi:users'));
-
-    if(token && user) {
-        this.setState({ loggedInUser: user });
     }
   };
 

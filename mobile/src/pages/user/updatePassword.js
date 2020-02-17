@@ -7,6 +7,8 @@ import {
   TextInput,
   TouchableOpacity,
   Alert,
+  AsyncStorage,
+  Keyboard,
 } from 'react-native';
 
 import api from '../../services/api';
@@ -30,15 +32,16 @@ export default class UpdatePassword extends Component{
 
   forgotPassword = async (email) => {
     try {
-      const response = await api.post('/auth/forgot_password', {
+      await api.post('/auth/forgot_password', {
         email,
       });
     
+      await AsyncStorage.setItem('@CodeApi:email', email);
+
+      Keyboard.dismiss();
       Alert.alert('','Token enviado para e-mail', [{
         text: 'OK',
-        onPress: () => this.props.navigation.navigate('ConfirmToken', { 
-            email: email, 
-        }),
+        onPress: () => this.props.navigation.navigate('ConfirmToken'),
       }]);
       
     } catch (response) {

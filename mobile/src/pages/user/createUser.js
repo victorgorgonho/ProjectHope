@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   AsyncStorage,
   Alert,
+  Keyboard,
 } from 'react-native';
 
 import api from '../../services/api';
@@ -56,6 +57,7 @@ export default class CreateUser extends Component{
         ['@CodeApi:user', JSON.stringify(user)],
       ]);
 
+      Keyboard.dismiss();
       Alert.alert('','Usuário criado com sucesso!');
       this.props.navigation.navigate('LoginScreen');
 

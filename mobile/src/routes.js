@@ -5,6 +5,7 @@ import UpdatePassword from './pages/user/updatePassword';
 import ConfirmToken from './pages/user/confirmToken';
 import LoginScreen from './pages/loginScreen';
 import HomeScreen from './pages/homeScreen';
+import ConfigUser from './pages/configUser';
 
 export default createStackNavigator({
     LoginScreen: {
@@ -21,6 +22,9 @@ export default createStackNavigator({
     },
     HomeScreen: {
         screen: HomeScreen
+    },
+    ConfigUser: {
+        screen: ConfigUser
     },
 }, {
     navigationOptions: {

@@ -7,6 +7,8 @@ import {
   TextInput,
   TouchableOpacity,
   Alert,
+  AsyncStorage,
+  Keyboard,
 } from 'react-native';
 
 import api from '../../services/api';
@@ -19,21 +21,17 @@ export default class ConfirmToken extends Component{
   
   state = {
     errorMessage: null,
+    loggedInUser: null,
     email: '',
     token: '',
     password: '',
-  };
+  }; 
 
-  UNSAFE_componentWillMount() {
-    this.setState ({
-      email: this.props.navigation.getParam('email')
-    });
+  async componentDidMount(){
+    const email = await AsyncStorage.getItem('@CodeApi:email');
+      
+    this.setState({email: email});
   }
-
-  onChangeTextEmail = (event) => {
-    event.persist();
-    this.setState({ email:event.nativeEvent.text });
-  };
   
   onChangeTextToken = (event) => {
     event.persist();
@@ -48,12 +46,13 @@ export default class ConfirmToken extends Component{
 
   resetPassword = async (email, token, password) => {
     try {
-      const response = await api.post('/auth/reset_password', {
+      await api.post('/auth/reset_password', {
         email,
         token,
         password,
       });
 
+      Keyboard.dismiss();
       Alert.alert('','Senha atualizada com sucesso');
       this.props.navigation.navigate('LoginScreen');
 
@@ -70,19 +69,19 @@ export default class ConfirmToken extends Component{
         style = {styles.logo}
         source = {require('../../icons/logo3.png')}
       />
-      
+  
       {!!this.state.errorMessage && <Text style = {styles.textError}>{ this.state.errorMessage }</Text>}
       <Text style={styles.textHeader}>
           Digite o token recebido no e-mail e a nova senha para completar a mudança de senha.
       </Text>
-      
+
       <View style={styles.containerTextInput}>
         
       <TextInput
           style = {styles.input}
-          placeholder = "E-mail"
+          placeholder = {this.state.email}
           placeholderTextColor = "#4B0082"
-          onChange = {this.onChangeTextEmail}
+          editable = {false}
         />
 
         <TextInput
@@ -102,7 +101,7 @@ export default class ConfirmToken extends Component{
       </View>
 
       <TouchableOpacity 
-        onPress = { () => this.resetPassword(this.state.email.trim().toLowerCase(), this.state.token, this.state.password)}
+        onPress = { () => this.resetPassword(this.state.email.trim(), this.state.token, this.state.password)}
         style = { styles.resetPasswordButton}
       >
         
