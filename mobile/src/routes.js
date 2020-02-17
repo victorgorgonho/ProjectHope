@@ -6,6 +6,7 @@ import ConfirmToken from './pages/user/confirmToken';
 import LoginScreen from './pages/loginScreen';
 import HomeScreen from './pages/homeScreen';
 import ConfigUser from './pages/configUser';
+import UserInfo from './pages/userInfo';
 
 export default createStackNavigator({
     LoginScreen: {
@@ -26,12 +27,15 @@ export default createStackNavigator({
     ConfigUser: {
         screen: ConfigUser
     },
+    UserInfo: {
+        screen: UserInfo
+    },
 }, {
     navigationOptions: {
         headerStyle: {
             backgroundColor: "#4B0082"
         },
-        headerTintColor: "#FFF"
+        headerTintColor: "#ffffff"
     }, 
 }, {
     initialRouteName: 'LoginScreen',

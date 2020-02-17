@@ -131,4 +131,35 @@ router.post('/reset_password', async (req,res) => {
 
 });
 
+//Give admin to a user
+router.post('/admin', async(req, res) =>{
+    try {
+        const {email, password } = req.body;
+
+        const user = await User.findOne({ email }).select('+password');
+
+        if(!user)
+            return res.status(400).send({error: 'User does not exist'});
+
+        if(!await bcrypt.compare(password, user.password))
+            return res.status(400).send({error: 'Wrong password'});
+        
+        await User.findByIdAndUpdate(user._id, {
+            name: user.name,
+            email: user.email,
+            password: user.password,
+            passwordResetToken: user.passwordResetToken,
+            passwordResetExpires: user.passwordResetExpires,
+            createdAt: user.createdAt,
+            isAdmin: true,
+            avatar: user.avatar
+        }, { new: true});
+
+        res.send();
+    } catch (err) {
+        console.log(err)
+        return res.status(400).send({error: 'Failed giving admin, try again'});
+    }
+});
+
 module.exports = app => app.use('/auth', router);

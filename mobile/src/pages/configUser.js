@@ -112,7 +112,17 @@ export default class ConfigUser extends Component {
                     </TouchableOpacity>
                  </View> 
 
-                 <TouchableOpacity
+
+                <TouchableOpacity
+                    style={styles.button}
+                    onPress={() => this.props.navigation.navigate('UserInfo')}
+                >
+                    <Text style={styles.textButton}>
+                        INFORMAÇÕES PESSOAIS
+                    </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
                     style={styles.button}
                     onPress={() => this.updateAvatar(this.state.loggedInUser._id)}
                 >
@@ -120,16 +130,7 @@ export default class ConfigUser extends Component {
                         MUDAR FOTO DE PERFIL
                     </Text>
                 </TouchableOpacity>
-
-                <TouchableOpacity
-                    style={styles.button}
-                    onPress={() => this.props.navigation.navigate('InfoUser')}
-                >
-                    <Text style={styles.textButton}>
-                        INFORMAÇÕES PESSOAIS
-                    </Text>
-                </TouchableOpacity>
-
+            
                 {this.state.loggedInUser && 
                  this.state.loggedInUser.isAdmin &&
                     <TouchableOpacity
