@@ -8,6 +8,7 @@ const User = require ('../models/user');
 
 const router = express.Router();
 
+//Get user ID and make a unique token based on a Secret key hide in /config
 function generateToken(params = {}){
     return jwt.sign(params, authConfig.secret,{
         expiresIn : 86400
@@ -20,9 +21,9 @@ router.post('/register', async(req, res)=>{
     
     try{
         if(await User.findOne({email}))
-            return res.status(400).send({error: 'User already exists'});
+            return res.status(400).send({error: 'Usuário já existe'});
         
-        const user =await User.create(req.body);
+        const user = await User.create(req.body);
 
         user.password = undefined;
 
@@ -32,7 +33,7 @@ router.post('/register', async(req, res)=>{
         });
         
     } catch(err) {
-        return res.status(400).send({error : 'Failed on register'});
+        return res.status(400).send({error : 'Falha ao criar usuário'});
     }
 });
 
@@ -43,11 +44,13 @@ router.post('/authenticate', async(req, res) =>{
     const user = await User.findOne({ email }).select('+password');
 
     if(!user)
-        return res.status(400).send({error: 'User does not exist'});
+        return res.status(400).send({error: 'Usuário não existe'});
 
+    //Compare typed password with the real password stored on MongoDB
     if(!await bcrypt.compare(password, user.password))
-        return res.status(400).send({error: 'Wrong password'});
+        return res.status(400).send({error: 'Senha errada'});
 
+    //Hide password from user, then it won't be sent as response
     user.password = undefined;
 
     res.send({
@@ -65,10 +68,12 @@ router.post('/forgot_password', async (req, res) => {
         const user = await User.findOne({email});
         
         if(!user)
-            return res.status(400).send({error: 'User does not exist'});
+            return res.status(400).send({error: 'Usuário não existe'});
 
+        //Generate a random token to be used to reset password
         const token = crypto.randomBytes(20).toString('hex');
 
+        //Gives 1 hour before token expires
         const now = new Date();
         now.setHours(now.getHours()+1);
         
@@ -79,6 +84,8 @@ router.post('/forgot_password', async (req, res) => {
             }
         });
 
+        //Send mail based on forgot_password.html in /resources/mail/auth/
+        //This mail will be captured by mailtrap, check /modules/mailer for more info
         mailer.sendMail({
             to: email,
             from:'josegorgonho@eng.ci.ufpb.br',
@@ -87,14 +94,14 @@ router.post('/forgot_password', async (req, res) => {
         }, (err) => {
             if(err){
                 console.log(err);
-                return res.status(400).send({error: 'Could not send mail, try again in a few seconds'});
+                return res.status(400).send({error: 'Falha ao enviar e-mail, tente novamente em alguns segundos'});
             }
             return res.send();
         })
 
     } catch (err) {
         console.log(err);
-        res.status(400).send({error: 'Error, try again in a few seconds'});
+        res.status(400).send({error: 'Erro, tente novamente em alguns segundos'});
 
     }
 });
@@ -109,16 +116,17 @@ router.post('/reset_password', async (req,res) => {
             .select('+passwordResetToken passwordResetExpires');
 
         if(!user)
-            return res.status(400).send({error: 'User does not exist'});
+            return res.status(400).send({error: 'Usuário não existe'});
 
         if(token !== user.passwordResetToken)
-            return res.status(400).send({error: "Invalid Token"});
+            return res.status(400).send({error: "Token inválido"});
         
         const now = new Date();
 
-        if( now> user.passwordResetExpires)
-        return res.status(400).send({error: 'Token is not valid anymore, try again'});
+        if( now > user.passwordResetExpires)
+        return res.status(400).send({error: 'Token não é mais válido, tente novamente'});
 
+        //If it gets here, password will be reset, because token and user are valid and not expired
         user.password = password;
 
         await user.save();
@@ -126,7 +134,7 @@ router.post('/reset_password', async (req,res) => {
         res.send();
 
     } catch (err) {
-        return res.status(400).send({error: 'Failed reseting password, try again'});
+        return res.status(400).send({error: 'Falha ao mudar senha, tente novamente'});
     }
 
 });
@@ -139,11 +147,12 @@ router.post('/admin', async(req, res) =>{
         const user = await User.findOne({ email }).select('+password');
 
         if(!user)
-            return res.status(400).send({error: 'User does not exist'});
+            return res.status(400).send({error: 'Usuário não existe'});
 
         if(!await bcrypt.compare(password, user.password))
-            return res.status(400).send({error: 'Wrong password'});
+            return res.status(400).send({error: 'Senha errada'});
         
+        //The only info changed will be "isAdmin" boolean, the rest still the same
         await User.findByIdAndUpdate(user._id, {
             name: user.name,
             email: user.email,
@@ -158,7 +167,7 @@ router.post('/admin', async(req, res) =>{
         res.send();
     } catch (err) {
         console.log(err)
-        return res.status(400).send({error: 'Failed giving admin, try again'});
+        return res.status(400).send({error: 'Falha ao dar administrador, tente novamente'});
     }
 });
 

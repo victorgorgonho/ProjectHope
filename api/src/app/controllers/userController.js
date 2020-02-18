@@ -13,7 +13,7 @@ router.get('/', async (req, res) => {
 
         return res.send({ users });
     } catch (err) {
-        return res.status(400).send({ erro: 'Failed loading users' });
+        return res.status(400).send({ erro: 'Falha ao listar usuários' });
     }
 });
 
@@ -30,12 +30,12 @@ router.put('/:userId', async (req, res) => {
         return res.send({ user });
 
     } catch (err) {
-        return res.status(400).send({ erro: 'Failed updating user' });
+        return res.status(400).send({ erro: 'Falha ao atualizar nome' });
     }
 });
 
 //Update existing user profile picture
-router.put('/:userId/avatar', async (req, res) => {
+router.put('/:userId/avatar/', async (req, res) => {
     try {
         const { avatar } = req.body;
 
@@ -45,7 +45,7 @@ router.put('/:userId/avatar', async (req, res) => {
 
         return res.send({ user });
     } catch (err) {
-        return res.status(400).send({ erro: 'Failed updating Avatar' });
+        return res.status(400).send({ erro: 'Falha ao atualizar foto de perfil' });
     }
 });
 

@@ -37,6 +37,7 @@ const UserSchema = new mongoose.Schema({
     },
 });
 
+//Hash to encrypt password in a way that if someone ever access database, won't be able to steal password
 UserSchema.pre('save', async function(next){
     const hash = await bcrypt.hash(this.password, 10);
     this.password = hash;

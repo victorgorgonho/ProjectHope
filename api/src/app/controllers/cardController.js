@@ -15,7 +15,7 @@ router.post('/create_card', async (req, res) => {
 
         return res.send({ card });
     } catch (err) {
-        return res.status(400).send({ erro: 'Failed creating new card' });
+        return res.status(400).send({ erro: 'Falha ao criar novo card' });
     }
 });
 
@@ -26,7 +26,7 @@ router.get('/', async (req, res) => {
 
         return res.send({ cards });
     } catch (err) {
-        return res.status(400).send({ erro: 'Failed loading cards' });
+        return res.status(400).send({ erro: 'Falha ao carregar cards' });
     }
 });
 
@@ -45,7 +45,7 @@ router.put('/:cardId', async (req, res) => {
 
         return res.send({ card });
     } catch(err) {
-        return res.status(400).send({ erro: 'Failed updating card' });
+        return res.status(400).send({ erro: 'Falha ao atualizar card' });
     }
 });
 
@@ -56,7 +56,7 @@ router.delete('/:cardId', async (req, res) => {
 
         return res.send();
     } catch(err) {
-        return res.status(400).send({ erro: 'Failed deleting card' });
+        return res.status(400).send({ erro: 'Falha ao deletar card' });
     }
 });
 

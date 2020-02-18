@@ -13,10 +13,8 @@ import * as ImagePicker from 'expo-image-picker';
 import * as Permissions from 'expo-permissions';
 import * as Constants from 'expo-constants';
 
-import Header from '../config/Header';
-import noIcon_png from '../icons/nouser.png';
-
-import api from '../services/api';
+import noIcon_png from '../../icons/nouser.png';
+import api from '../../services/api';
 
 export default class ConfigUser extends Component {
 
@@ -27,10 +25,12 @@ export default class ConfigUser extends Component {
     };
 
     static navigationOptions = {
-        header: null,
+        headerTitle: 'Configurações'
     };
 
+    //Right after component mount, load users array, and then get permission to access library, so you can update profile pic
     async componentDidMount() {
+        //convert JSON to object and store in user
         const user = JSON.parse(await AsyncStorage.getItem('@CodeApi:users'));
 
         this.getPermissionAsync();
@@ -47,6 +47,8 @@ export default class ConfigUser extends Component {
         // }
         // else 
         // if(Constants.platform.android) {
+
+        //get permission to access gallery, to change profile pic
         const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
         
         if (status !== 'granted') {
@@ -54,50 +56,44 @@ export default class ConfigUser extends Component {
         }
     }
     
+    //Update profile pic with ExpoImagePicker library
     updateAvatar = async (id) => {
         try{
+            //Storage in result the Image Picked
             let result = await ImagePicker.launchImageLibraryAsync({
-                mediaTypes: ImagePicker.MediaTypeOptions.All,
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
                 allowsEditing: true,
                 base64: true,
                 aspect: [4,3],
                 quality: 1
             });
-        
+
+            //If you didn't canceled picture selection, update avatar with chosen pic
             if (!result.cancelled) {
-              this.setState({ avatar: result.base64 });
-            }
+                this.setState({ avatar: result.uri });
         
-            const avatar = this.state.avatar;
-            const token = await AsyncStorage.getItem('@CodeApi:token');
-            const user = this.state.loggedInUser;
-            
-            user.avatar = `data:image/jpeg;base64,${avatar}`;
+                const avatar = this.state.avatar;
+                const token = await AsyncStorage.getItem('@CodeApi:token');
+                const user = this.state.loggedInUser;
+               
+                user.avatar = `data:image/jpeg;base64,${avatar}`;
 
-            await AsyncStorage.setItem(
-                '@CodeApi:users', JSON.stringify(user),
-            );
-
-            await api.put(`/user/${id}/avatar/`, {
-                avatar
-            }, { headers: { Authorization: `Bearer ${token}` }});
-
+                await AsyncStorage.setItem(
+                    '@CodeApi:users', JSON.stringify(user),
+                );
+                
+                await api.put(`/user/${id}/avatar/`, {
+                    avatar
+                }, { headers: { Authorization: `Bearer ${token}` }});
+            }
         } catch (response) {
             this.setState({ errorMessage: response.data.error });
         }
-        
-        
     };
 
     render(){
         return(
             <View style = { styles.container }>
-
-                <Header
-                    onPressBack={() => this.props.navigation.navigate('HomeScreen')}
-                    title="Configurações"
-                />
-
                 <View style={styles.containerImage}>
                     
                     <TouchableOpacity
@@ -131,14 +127,15 @@ export default class ConfigUser extends Component {
                     </Text>
                 </TouchableOpacity>
             
+                {/* Render this option to manage cards if user is admin */}
                 {this.state.loggedInUser && 
                  this.state.loggedInUser.isAdmin &&
                     <TouchableOpacity
                         style={styles.button}
-                        onPress={() => this.props.navigation.navigate('CardsConfig')}
+                        onPress={() => this.props.navigation.navigate('ConfigCards')}
                     >
                         <Text style={styles.textButton}>
-                            CARDS
+                            CONTROLE DE CARDS
                         </Text>
                     </TouchableOpacity>
                 }
@@ -167,11 +164,11 @@ const styles = StyleSheet.create({
     button: {
         alignItems: 'center',
         justifyContent: 'center',
+        width: 350,
+        height: 42,
         marginTop: 20,
         marginBottom: 20,
         borderRadius: 10,
-        width: 350,
-        height: 42,
         backgroundColor: '#4B0082',
     },
     textButton: {

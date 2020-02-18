@@ -11,6 +11,7 @@ import {
   Keyboard,
 } from 'react-native';
 
+import logo from '../../icons/logo3.png';
 import api from '../../services/api';
 
 export default class CreateUser extends Component{
@@ -42,6 +43,7 @@ export default class CreateUser extends Component{
     this.setState({ password:event.nativeEvent.text });
   };
 
+  //Register user
   register = async (name, email, password) => {
     try {
       const response = await api.post('/auth/register', {
@@ -51,7 +53,8 @@ export default class CreateUser extends Component{
       });
 
       const { user, token } = response.data;
-    
+      
+      //Storage token and new user (as .JSON) in AsyncStorage to be used in another pages
       await AsyncStorage.multiSet([
         ['@CodeApi:token', token],
         ['@CodeApi:user', JSON.stringify(user)],
@@ -72,7 +75,7 @@ export default class CreateUser extends Component{
       
       <Image
         style = {styles.logo}
-        source = {require('../../icons/logo3.png')}
+        source = {logo}
       />
       
       {!!this.state.errorMessage && <Text style = {styles.textError}>{ this.state.errorMessage }</Text>}
@@ -131,71 +134,71 @@ export default class CreateUser extends Component{
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'flex-start',
+    flex: 1,
     paddingTop: 110,
+    backgroundColor: '#fff',
   },
   logo: {
     width: 500,
     height: 160,
   },
   textError: {
-    fontSize: 14,
     fontWeight: 'bold',
+    fontSize: 14,
     color: '#CC0000',
   }, 
   input: {
-    borderColor: '#E8E8E8',
-    borderBottomWidth: 1.5,
     width: 340,
     marginTop: 25,
     padding: 10,
     fontSize: 14,
+    borderBottomWidth: 1.5,
+    borderColor: '#E8E8E8',
   },
   textInfo: {
-    paddingTop: 50,
-    fontSize: 14,
-    fontWeight: 'bold',
     textAlign: 'center',
+    fontWeight: 'bold',
+    fontSize: 14,
+    paddingTop: 50,
   },
   textNewUser: {
-    fontSize: 14,
     fontWeight: 'bold',
+    fontSize: 14,
     color: '#FFF',
   },
   newUserButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
     width: 350,
     height: 42,
-    backgroundColor: '#4B0082',
     marginTop: 20,
     marginBottom: 20,
     borderRadius: 9,
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: '#4B0082',
   },
   textExistingUser: {
-    fontSize: 14,
     fontWeight: 'bold',
+    fontSize: 14,
     color: '#4B0082',
   },
   existingUserButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
     width: 350,
     height: 42,
-    borderWidth: 2,
-    borderColor: '#4B0082',
-    backgroundColor: '#FFF',
     marginTop: 15,
     marginBottom: 20,
     borderRadius: 9,
-    alignItems: 'center',
-    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: '#4B0082',
+    backgroundColor: '#FFF',
   },
   textInfo: {
+    fontWeight: 'bold',
     paddingTop: 50,
     fontSize: 14,
-    fontWeight: 'bold',
     color: '#4B0082',
   },    
 });

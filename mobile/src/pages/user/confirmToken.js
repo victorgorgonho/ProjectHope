@@ -11,6 +11,7 @@ import {
   Keyboard,
 } from 'react-native';
 
+import logo from '../../icons/logo3.png';
 import api from '../../services/api';
 
 export default class ConfirmToken extends Component{
@@ -27,6 +28,7 @@ export default class ConfirmToken extends Component{
     password: '',
   }; 
 
+  //Load email from AsyncStorage so you can autocomplete
   async componentDidMount(){
     const email = await AsyncStorage.getItem('@CodeApi:email');
       
@@ -43,7 +45,7 @@ export default class ConfirmToken extends Component{
     this.setState({ password:event.nativeEvent.text });
   };
 
-
+  //Reset password if all three infos are correct
   resetPassword = async (email, token, password) => {
     try {
       await api.post('/auth/reset_password', {
@@ -67,7 +69,7 @@ export default class ConfirmToken extends Component{
       
       <Image
         style = {styles.logo}
-        source = {require('../../icons/logo3.png')}
+        source = {logo}
       />
   
       {!!this.state.errorMessage && <Text style = {styles.textError}>{ this.state.errorMessage }</Text>}
@@ -130,73 +132,73 @@ export default class ConfirmToken extends Component{
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'flex-start',
+    flex: 1,
     paddingTop: 110,
+    backgroundColor: '#fff',
   },
   logo: {
     width: 500,
     height: 160,
   },
   textHeader: {
-    fontSize: 14,
     fontWeight: 'bold',
-    color: '#4B0082',
+    fontSize: 14,
     marginLeft: 40,
     marginTop: 20,
+    color: '#4B0082',
   },
   textError: {
-    fontSize: 14,
     fontWeight: 'bold',
+    fontSize: 14,
     color: '#CC0000',
   }, 
   input: {
-    borderColor: '#E8E8E8',
-    borderBottomWidth: 1.5,
     width: 350,
     marginTop: 25,
-    padding: 10,
     fontSize: 14,
+    padding: 10,
+    borderBottomWidth: 1.5,
+    borderColor: '#E8E8E8',
   },
   textResetPassword: {
-    fontSize: 14,
     fontWeight: 'bold',
+    fontSize: 14,
     color: '#FFF',
   },
   resetPasswordButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
     width: 350,
     height: 42,
-    backgroundColor: '#4B0082',
     marginTop: 20,
     marginBottom: 20,
     borderRadius: 9,
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: '#4B0082',
   },
   textExistingUser: {
-    fontSize: 14,
     fontWeight: 'bold',
+    fontSize: 14,
     color: '#4B0082',
   },
   textInfo: {
-    paddingTop: 10,
-    fontSize: 14,
-    fontWeight: 'bold',
     textAlign: 'center',
+    fontWeight: 'bold',
+    fontSize: 14,
+    paddingTop: 10,
     color: '#4B0082',
   },
   existingUserButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
     width: 350,
     height: 42,
+    marginBottom: 20,
+    marginTop: 15,
+    borderRadius: 9,
     borderWidth: 2,
     borderColor: '#4B0082',
     backgroundColor: '#FFF',
-    marginTop: 15,
-    marginBottom: 20,
-    borderRadius: 9,
-    alignItems: 'center',
-    justifyContent: 'center',
   }, 
 });

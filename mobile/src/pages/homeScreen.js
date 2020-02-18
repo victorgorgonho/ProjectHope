@@ -37,7 +37,7 @@ export default class HomeScreen extends Component {
                     this.setState({user: user});
             }
         );
-        this.setState({didWillFocusSubscription});
+        this.setState({didWillFocusSubscription: didWillFocusSubscription});
     }
 
     state = {
@@ -47,6 +47,7 @@ export default class HomeScreen extends Component {
         isLoading: false,
     }
     
+    //Load token and user (as object) from AsyncStorage 
     async componentDidMount() {
         const token = await AsyncStorage.getItem('@CodeApi:token');
         const user = JSON.parse(await AsyncStorage.getItem('@CodeApi:users'));
@@ -57,6 +58,7 @@ export default class HomeScreen extends Component {
         this.getCards();
     };
 
+    //Update cards state with cards array from AsyncStorage
     getCards = async () => {
         const token = await AsyncStorage.getItem('@CodeApi:token');
         const response = await api.get('/cards/', {}, { headers: { Authorization: `Bearer ${token}` }});
@@ -65,12 +67,14 @@ export default class HomeScreen extends Component {
         this.setState({cards});
     }
 
+    //Wait 5s then update cards
     listCards = () => {
         wait(5000).then(() => this.setState({isLoading: true})).then(() => this.setState({isLoading: false}));
         this.getCards();
     }
 
     render(){
+        //If cards returned null, don't render to avoid memory leak
         if(!this.state.cards) return null;
 
         return(
@@ -191,39 +195,39 @@ export default class HomeScreen extends Component {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        flexDirection: 'column',
         position: 'relative',
+        flexDirection: 'column',
+        flex: 1,
         backgroundColor: '#FFF',
     },
     header:{
-        flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'flex-end',
+        flexDirection: 'row',
         position: 'relative',
         height: 80,
         marginBottom: 10,
     },
     containerTextHeader: {
-        flex: 1,
         justifyContent: 'center',
-        marginLeft: 20,
-        height: 80,
         width: 300,
+        height: 80,
+        flex: 1,
+        marginLeft: 20,
     },
     containerAvatar: {
         alignItems: 'center',
         justifyContent: 'center',
-        height: 80,
         width: 95,
+        height: 80,
     },
     buttonAvatar: {
         alignItems: 'center',
         justifyContent: 'center',
         width: 60,
         height: 60,
-        borderWidth: 5,
         borderRadius: 40,
+        borderWidth: 5,
         borderColor: '#4B0082',
     },
     avatarPic: {
@@ -256,13 +260,13 @@ const styles = StyleSheet.create({
     containerDicasPic: {
         justifyContent: 'flex-start',
         position: 'relative',
-        height: 200,
         width: 120,
+        height: 200,
         borderRadius: 25,
     },
     containerDicasInfos: {
-        flex: 1,
         height: 200,
+        flex: 1,
         borderRadius: 25,
     },
     picDicas: {
@@ -272,10 +276,10 @@ const styles = StyleSheet.create({
     button:{
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#D3BDF0',
         width: 320,
         height: 43,
         borderRadius: 20,
+        backgroundColor: '#D3BDF0',
     },
     textButton: {
         fontWeight: 'bold',
@@ -341,8 +345,8 @@ const styles = StyleSheet.create({
         backgroundColor: '#4B0082',
     },
     containerMotivacional: {
-        flexDirection: 'column',
         alignItems: 'center',
+        flexDirection: 'column',
         borderRadius: 25,
         marginBottom: 10,
     },
@@ -350,25 +354,25 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         width: 110,
         height: 80,
+        paddingTop: 25,
         borderRadius: 25,
         marginRight: 10,
-        paddingTop: 25,
     },
     containerMotivacionalInfos: {
-        flex: 1,
         height: 200,
+        flex: 1,
         borderRadius: 25,
+        paddingTop: 15,
         marginRight: 20,
         marginLeft: 20,
-        paddingTop: 15,
     },
     picMotivacional: {
         width: 60,
         height: 60,
     },
     descriptionMotivacional:{
-        fontFamily: 'sans-serif-condensed',
         textAlign: 'center',
+        fontFamily: 'sans-serif-condensed',
         fontWeight: 'bold',
         fontSize: 17,
         paddingTop: 10,

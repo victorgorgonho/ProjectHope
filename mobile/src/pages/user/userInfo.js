@@ -7,7 +7,7 @@ import {
     AsyncStorage,
   } from 'react-native';
 
-import noIcon_png from '../icons/nouser.png';
+import noIcon_png from '../../icons/nouser.png';
 
 export default class UserInfo extends Component {
 
@@ -19,6 +19,7 @@ export default class UserInfo extends Component {
         loggedInUser: null,
     }
 
+    //Load user before component mount as Object
     async componentWillMount(){
         const user = JSON.parse(await AsyncStorage.getItem('@CodeApi:users'));
 
@@ -82,10 +83,10 @@ const styles = StyleSheet.create({
         paddingLeft: 32,
     },
     textTitle: {
-        fontSize: 19,
         fontWeight: 'bold',
-        color: 'rgb(62, 6, 136)',
+        fontSize: 19,
         marginVertical: 10,
+        color: '#4B0082',
     },
     textDescription: {
         fontSize: 15,
