@@ -93,7 +93,7 @@ export default class ConfigUser extends Component {
 
     render(){
         return(
-            <View style = { styles.container }>
+            <View style = {styles.container}>
                 <View style={styles.containerImage}>
                     
                     <TouchableOpacity
@@ -106,7 +106,7 @@ export default class ConfigUser extends Component {
                             source={this.state.avatar ? {uri: this.state.avatar} : noIcon_png}
                         />
                     </TouchableOpacity>
-                 </View> 
+                </View>
 
 
                 <TouchableOpacity
@@ -130,14 +130,25 @@ export default class ConfigUser extends Component {
                 {/* Render this option to manage cards if user is admin */}
                 {this.state.loggedInUser && 
                  this.state.loggedInUser.isAdmin &&
-                    <TouchableOpacity
-                        style={styles.button}
-                        onPress={() => this.props.navigation.navigate('ConfigCards')}
-                    >
-                        <Text style={styles.textButton}>
-                            CONTROLE DE CARDS
-                        </Text>
-                    </TouchableOpacity>
+                    <View>
+                        <TouchableOpacity
+                            style={styles.button}
+                            onPress={() => this.props.navigation.navigate('ConfigCards')}
+                        >
+                            <Text style={styles.textButton}>
+                                CONTROLE DE CARDS
+                            </Text>
+                        </TouchableOpacity>
+                        
+                        <TouchableOpacity
+                            style={styles.button}
+                            onPress={() => this.props.navigation.navigate('SendNotification')}
+                        >
+                            <Text style={styles.textButton}>
+                                ENVIAR NOTIFICAÇÃO
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
                 }
             </View>
         );

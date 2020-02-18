@@ -35,6 +35,10 @@ const UserSchema = new mongoose.Schema({
     avatar: {
         type: String,
     },
+    tokenExpo: {
+        type: String,
+        default: 'ExponentPushToken[cySFImCY27rNJi97aIYrWa]', //My Device Expo Token
+    },
 });
 
 //Hash to encrypt password in a way that if someone ever access database, won't be able to steal password

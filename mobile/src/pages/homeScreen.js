@@ -47,11 +47,35 @@ export default class HomeScreen extends Component {
         isLoading: false,
     }
     
+    registerForPushNotificationsAsync = async (tokenExpo) => {
+        const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+        // only asks if permissions have not already been determined, because
+        // iOS won't necessarily prompt the user a second time.
+        // On Android, permissions are granted on app installation, so
+        // `askAsync` will never prompt the user
+      
+        // Stop here if the user did not grant permissions
+        if (status !== 'granted') {
+          alert('No notification permissions!');
+          return;
+        }
+      
+        // Get the token that identifies this device, unfortunaly isn't working for my device, so it's 
+        // being storaged as a constant string in UserSchema.
+
+        // let token = await Notifications.getExpoPushTokenAsync();
+    
+        // Should store the token in any database or AsyncStorage
+    }
+
     //Load token and user (as object) from AsyncStorage 
     async componentDidMount() {
         const token = await AsyncStorage.getItem('@CodeApi:token');
         const user = JSON.parse(await AsyncStorage.getItem('@CodeApi:users'));
-    
+        
+        //Asks user permission to send notification, and storage his ExpoToken to be able to receive notifications
+        this.registerForPushNotificationsAsync(user.tokenExpo);
+
         if(token && user) {
             this.setState({ loggedInUser: user });
         }

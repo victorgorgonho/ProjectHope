@@ -10,3 +10,6 @@ api.addResponseTransform(response => {
 });
 
 export default api;
+
+// 10.204.230.156 Eduroam
+// 192.168.15.50 Casa JP

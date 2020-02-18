@@ -9,6 +9,7 @@ import LoginScreen from './pages/loginScreen';
 import UpdatePassword from './pages/user/updatePassword';
 import ConfirmToken from './pages/user/confirmToken';
 import HomeScreen from './pages/homeScreen';
+import SendNotification from './pages/sendNotification';
 
 //Create StackNavigator, based on a Stack abstract data type, to travel between screens, starting from Login
 export default createStackNavigator({
@@ -38,6 +39,9 @@ export default createStackNavigator({
     },
     CreateCards: {
         screen: CreateCards
+    },
+    SendNotification: {
+        screen: SendNotification
     },
 }, {
     //Header standard colors
