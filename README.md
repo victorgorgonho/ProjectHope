@@ -2,9 +2,6 @@
     <img alt="Project Hope" title="#delicinha" src="mobile/src/icons/logo3.png" width="500px" />
 </h1>
 
-<h4 align="center">
-  Project Hope
-</h4>
 <p align="center">
   <img alt="GitHub language count" src="https://img.shields.io/github/languages/count/victorgorgonho/projectHope">
 
@@ -29,6 +26,10 @@
 </p>
 
 <br>
+
+<h1 align="center">
+    <img alt="Project Hope" title="#delicinha" src="mobile/src/icons/projectHopeReadme.png" width="1100px" />
+</h1>
 
 ## :rocket: Tecnologias
 
